@@ -140,7 +140,7 @@ const GithubProjectCard = ({
           <div className="col-span-2">
             <div className="card compact bg-base-100 shadow bg-opacity-40">
               <div className="card-body">
-                <div className="mx-3 flex items-center justify-between mb-2">
+                <div className="mx-3 flex items-center justify-between">
                   <h5 className="card-title">
                     {loading ? (
                       skeleton({ widthCls: 'w-40', heightCls: 'h-8' })
@@ -163,6 +163,9 @@ const GithubProjectCard = ({
                     </a>
                   )}
                 </div>
+                <p className="mx-3 mb-2 italic text-base-content text-opacity-60 text-sm">
+                  {'updating...'}
+                </p>
                 <div className="col-span-2">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {loading ? renderSkeleton() : renderProjects()}

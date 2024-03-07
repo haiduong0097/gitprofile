@@ -30,6 +30,7 @@ import ExternalProjectCard from './external-project-card';
 import BlogCard from './blog-card';
 import Footer from './footer';
 import PublicationCard from './publication-card';
+import { PROFILE_DATA, REPO_DATA } from '../git-data';
 
 /**
  * Renders the GitProfile component.
@@ -49,25 +50,31 @@ const GitProfile = ({ config }: { config: Config }) => {
 
   const getGithubProjects = useCallback(
     async (publicRepoCount: number): Promise<GithubProject[]> => {
+      if (!sanitizedConfig.projects.github.display) return [];
+
       if (sanitizedConfig.projects.github.mode === 'automatic') {
         if (publicRepoCount === 0) {
           return [];
         }
 
-        const excludeRepo =
-          sanitizedConfig.projects.github.automatic.exclude.projects
-            .map((project) => `+-repo:${project}`)
-            .join('');
+        // TODO pending spam call api when in local
+        // const excludeRepo =
+        //   sanitizedConfig.projects.github.automatic.exclude.projects
+        //     .map((project) => `+-repo:${project}`)
+        //     .join('');
 
-        const query = `user:${sanitizedConfig.github.username}+fork:${!sanitizedConfig.projects.github.automatic.exclude.forks}${excludeRepo}`;
-        const url = `https://api.github.com/search/repositories?q=${query}&sort=${sanitizedConfig.projects.github.automatic.sortBy}&per_page=${sanitizedConfig.projects.github.automatic.limit}&type=Repositories`;
+        // const query = `user:${sanitizedConfig.github.username}+fork:${!sanitizedConfig.projects.github.automatic.exclude.forks}${excludeRepo}`;
+        // const url = `https://api.github.com/search/repositories?q=${query}&sort=${sanitizedConfig.projects.github.automatic.sortBy}&per_page=${sanitizedConfig.projects.github.automatic.limit}&type=Repositories`;
 
-        const repoResponse = await axios.get(url, {
-          headers: { 'Content-Type': 'application/vnd.github.v3+json' },
-        });
-        const repoData = repoResponse.data;
+        // const repoResponse = await axios.get(url, {
+        //   headers: { 'Content-Type': 'application/vnd.github.v3+json' },
+        // });
+        // const repoData = repoResponse.data;
 
-        return repoData.items;
+        // *Fixed data (call one time from github)
+        const repoData = REPO_DATA;
+
+        return repoData.items as unknown as GithubProject[];
       } else {
         if (sanitizedConfig.projects.github.manual.projects.length === 0) {
           return [];
@@ -88,6 +95,7 @@ const GitProfile = ({ config }: { config: Config }) => {
     },
     [
       sanitizedConfig.github.username,
+      sanitizedConfig.projects.github.display,
       sanitizedConfig.projects.github.mode,
       sanitizedConfig.projects.github.manual.projects,
       sanitizedConfig.projects.github.automatic.sortBy,
@@ -101,10 +109,14 @@ const GitProfile = ({ config }: { config: Config }) => {
     try {
       setLoading(true);
 
-      const response = await axios.get(
-        `https://api.github.com/users/${sanitizedConfig.github.username}`,
-      );
-      const data = response.data;
+      // TODO pending spam call api when in local
+      // const response = await axios.get(
+      //   `https://api.github.com/users/${sanitizedConfig.github.username}`,
+      // );
+      // const data = response.data;
+
+      // *Fixed data (call one time from github)
+      const data = PROFILE_DATA;
 
       setProfile({
         avatar: data.avatar_url,
@@ -246,22 +258,14 @@ const GitProfile = ({ config }: { config: Config }) => {
                 </div>
                 <div className="lg:col-span-2 col-span-1">
                   <div className="grid grid-cols-1 gap-6">
-                    {sanitizedConfig.projects.github.display && (
-                      <GithubProjectCard
-                        header={sanitizedConfig.projects.github.header}
-                        limit={sanitizedConfig.projects.github.automatic.limit}
-                        githubProjects={githubProjects}
-                        loading={loading}
-                        username={sanitizedConfig.github.username}
-                        googleAnalyticsId={sanitizedConfig.googleAnalytics.id}
-                      />
-                    )}
+                    {/* About me */}
                     {sanitizedConfig.publications.length !== 0 && (
                       <PublicationCard
                         loading={loading}
                         publications={sanitizedConfig.publications}
                       />
                     )}
+
                     {sanitizedConfig.projects.external.projects.length !==
                       0 && (
                       <ExternalProjectCard
@@ -271,6 +275,16 @@ const GitProfile = ({ config }: { config: Config }) => {
                           sanitizedConfig.projects.external.projects
                         }
                         googleAnalyticId={sanitizedConfig.googleAnalytics.id}
+                      />
+                    )}
+                    {sanitizedConfig.projects.github.display && (
+                      <GithubProjectCard
+                        header={sanitizedConfig.projects.github.header}
+                        limit={sanitizedConfig.projects.github.automatic.limit}
+                        githubProjects={githubProjects}
+                        loading={loading}
+                        username={sanitizedConfig.github.username}
+                        googleAnalyticsId={sanitizedConfig.googleAnalytics.id}
                       />
                     )}
                     {sanitizedConfig.blog.display && (

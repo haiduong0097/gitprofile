@@ -75,12 +75,13 @@ const PublicationCard = ({
 
   const renderPublications = () => {
     return publications.map((item, index) => (
-      <a
-        className="card shadow-lg compact bg-base-100 cursor-pointer"
+      // disable link because render About me here
+      <div // a -> div
+        className="card shadow-lg compact bg-base-100" // cursor-pointer
         key={index}
-        href={item.link}
-        target="_blank"
-        rel="noreferrer"
+        // href={item.link}
+        // target="_blank"
+        // rel="noreferrer"
       >
         <div className="p-8 h-full w-full">
           <div className="flex items-center flex-col">
@@ -113,7 +114,7 @@ const PublicationCard = ({
             </div>
           </div>
         </div>
-      </a>
+      </div>
     ));
   };
 
@@ -130,13 +131,14 @@ const PublicationCard = ({
                       skeleton({ widthCls: 'w-40', heightCls: 'h-8' })
                     ) : (
                       <span className="text-base-content opacity-70">
-                        Publications
+                        About me
                       </span>
                     )}
                   </h5>
                 </div>
                 <div className="col-span-2">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-6"> */}
+                  <div className="grid grid-cols-1   gap-6">
                     {loading ? renderSkeleton() : renderPublications()}
                   </div>
                 </div>
